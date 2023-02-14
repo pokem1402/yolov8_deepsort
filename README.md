@@ -82,9 +82,9 @@ object_two_tracker.py
   --plot_tracking : 지정하면 matching 되지 않은 차량에 대한 추적을 bounding box로 그려줍니다.
   (default: False)
   --video_mask1 : Gallery 영상에 대한 video mask 이미지 위치입니다.
-  (default: None)
+  (default: masking_video1.jpg)
   --video_mask2 : Query 영상에 대한 video mask 이미지 위치입니다.
-  (default: None)
+  (default: masking_video2.jpg)
   --max_cosine_distance : cosine distance threshold
   (default: 0.4)
   --frame_skip : 비디오의 frame을 얼마나 skip할지 정합니다. [0, 1) 사이의 범위의 값으로 한정됩니다.
@@ -115,4 +115,4 @@ Fast-ReID Pretrained model 간의 성능비교
 
 ## Data File
 
-object_two_tracker.py 에서 사용한 데이터 파일은 [구글 드라이브](https://drive.google.com/drive/folders/1U-HkCiRLllAAYCbR0MkYH_QeLUld0Ony?usp=share_link)를 통해 다운로드 받을 수 있습니다.
+object_two_tracker.py 에서 사용한 데이터 파일 및 masking image [구글 드라이브](https://drive.google.com/drive/folders/1U-HkCiRLllAAYCbR0MkYH_QeLUld0Ony?usp=share_link)를 통해 다운로드 받을 수 있습니다.
