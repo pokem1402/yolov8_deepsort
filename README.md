@@ -107,7 +107,7 @@ object_two_tracker.py
 
 ## Result
 
-Fast-ReID Pretrained model 간의 성능비교
+Fast-ReID Pretrained model 구동 영상
 
 ![git](https://user-images.githubusercontent.com/18918072/218662959-a45b7405-6a07-4ddd-8538-0c02c5fa1571.gif)
 
