@@ -54,6 +54,7 @@ object_tracker.py
 object_two_tracker.py 파일을 통해 두 영상간의 Re-identification을 수행할 수 있습니다.
 
 ```bash
+object_two_tracker.py
   --weights_path : weight가 저장된 폴더입니다.
   (default: ./weights/)
   --weights : yolo 모델을 위한 weights 파일입니다. 모델에 대한 정보는 [공식 깃헙 Readme](https://github.com/ultralytics/ultralytics) 에서 확인 가능하고 모델명을 지정하면 자동으로 다운로드 받습니다.
