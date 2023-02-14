@@ -71,6 +71,10 @@ class Track:
         self.hits = 1
         self.age = 1
         self.time_since_update = 0
+        
+        # for reid
+        self.matched = False
+        self.match_id = -1
 
         self.state = TrackState.Tentative
         self.features = []
