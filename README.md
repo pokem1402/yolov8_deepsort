@@ -115,4 +115,4 @@ Fast-ReID Pretrained model 간의 성능비교
 
 ## Data File
 
-object_two_tracker.py 에서 사용한 데이터 파일 및 masking image [구글 드라이브](https://drive.google.com/drive/folders/1U-HkCiRLllAAYCbR0MkYH_QeLUld0Ony?usp=share_link)를 통해 다운로드 받을 수 있습니다.
+object_two_tracker.py 에서 사용한 데이터 파일 및 masking image는 [구글 드라이브](https://drive.google.com/drive/folders/1U-HkCiRLllAAYCbR0MkYH_QeLUld0Ony?usp=share_link)를 통해 다운로드 받을 수 있습니다.
