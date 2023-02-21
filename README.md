@@ -1,9 +1,49 @@
 # yolov8_deepsort + Vehicle Re-Identification between two videos
 
 
-[Yolo v4 DeepSort](https://github.com/theAIGuysCode/yolov4-deepsort) 코드를 기반으로 [yolo v8](https://github.com/ultralytics/ultralytics) 모델을 사용하여 구축한 yolo deepsort입니다.
+[Yolo v4 DeepSort](https://github.com/theAIGuysCode/yolov4-deepsort) 코드를 기반으로 [yolo v8](https://github.com/ultralytics/ultralytics) 모델을 사용하여 구축한 yolo deepsort
 
-해당 코드를 만든 목적이 CCTV 영상에서의 차량 Tracking이기 때문에 Deep Sort의 Deep Appearance Descriptor는 [Fast-ReID](https://github.com/JDAI-CV/fast-reid)의 모델 중 veriwild-dataset으로 학습된 모델을 사용하였습니다.
+## 해결하고자 한 문제
+
+- 서로 다른 두 영상 사이에 등장하는 동일 차량을 구분해내는 문제
+![그림1](https://user-images.githubusercontent.com/18918072/220260965-4e8384bf-bdeb-460f-b3d8-0c1ecb5cf7f4.png)
+
+## 이 기술을 구현하기 위해 사용한 모델
+
+- Object Detection
+    - 사용한 모델 : YOLO (You Only Look Once)
+
+- Object Tracking
+    - 사용한 모델 : DeepSORT (Simple Online and Realtime Tracking with Deep Association Metric)
+
+- Re-Identification
+    - 사용한 모델 : Fast-ReID
+    
+## Task
+
+- Main Task
+    - 서로 다른 두 영상 사이에 등장하는 동일 차량을 구분하는 알고리즘 개발
+- Sub Task
+    - [공개된 사전학습된 모델 중에 어떤 것이 프로젝트에 가장 적합한 지 평가](https://github.com/pokem1402/vehicle_reid)
+
+## Identity Switching
+- 
+
+
+## Deep Appearance Descriptor에 Re-ID 모델 적용
+- 해당 코드를 만든 목적이 CCTV 영상에서의 차량 Tracking이기 때문에 Deep Sort의 Deep Appearance Descriptor는 [Fast-ReID](https://github.com/JDAI-CV/fast-reid)의 모델 중 veriwild-dataset으로 학습된 모델을 사용
+
+## Video Mask
+
+- target 데이터는 CCTV 영상이기 때문에 관심 영역이 존재.
+- 관심 영역 외의 지역을 제외하기 위해 masking image 도입하여 필터링
+- 영상을 직접 편집하지 않아도되는 장점
+
+![그룹 18](https://user-images.githubusercontent.com/18918072/220316149-0b214e65-e3aa-4f36-b9f3-1d8b7bc20ced.png)
+ - Masking image와 frame의 합성하여 모델에서 사용하는 frame 제작
+ 
+
+
 
 ## 구동 환경
 
