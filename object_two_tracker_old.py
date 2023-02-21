@@ -22,8 +22,8 @@ from deep_sort.tracker import Tracker
 from deep_sort.detection import Detection
 
 flags.DEFINE_string("weights_path", "./weights/", "path to weights files")
-flags.DEFINE_string("sort_weights", "reid/veriwild_dynamic.onnx", "deep feature extractor weights")
-flags.DEFINE_string("reid_weights", "reid/veriwild_dynamic.onnx", "ReID pretrained model")
+flags.DEFINE_string("sort_weights", "reid/VeRi_dynamic.onnx", "deep feature extractor weights")
+flags.DEFINE_string("reid_weights", None, "ReID pretrained model")
 flags.DEFINE_string("weights", 'yolov8m.pt', "path to weights file")
 flags.DEFINE_string("video1", "./data/section_cam.mp4", "path to input video1 or set to 0 for webcam")
 flags.DEFINE_string("video2", "./data/number_recog.mp4", "path to input video2")
@@ -181,12 +181,15 @@ def main(_argv):
             # yolo
             results = yolo(image_data[i], iou = FLAGS.iou, conf = FLAGS.conf, verbose=False)[0]
             
+            # run nms
+            indices = torchvision.ops.nms(results.boxes.xyxy, results.boxes.conf, FLAGS.iou).cpu().numpy()
+            
             factor = np.array([width[i], height[i], width[i], height[i]])[np.newaxis, ...]
             boxes = results.boxes.xyxyn.cpu().numpy()        
             boxes[:, 2:] = results.boxes.xywhn[:, 2:].cpu().numpy() 
-            boxes = (boxes*factor).astype(np.uint16)
-            scores = results.boxes.conf
-            classes = results.boxes.cls
+            boxes = (boxes*factor).astype(np.uint16)[indices]
+            scores = results.boxes.conf[indices]
+            classes = results.boxes.cls[indices]
 
             # relative position filtering        
             accepted, _ = util.region_filtering_by_relative_position(boxes, height[i],
@@ -276,45 +279,32 @@ def main(_argv):
             query_feat = encoder_reid(frame2, query_bbox)
             gallery_feat = encoder_reid(frame1, gallery_bbox)
         
-            cosine_distance = nn_matching._cosine_distance(query_feat, gallery_feat)[0, :]
-            idxsort = np.argsort(cosine_distance)
-            idx_threshold = idxsort[np.where(cosine_distance[idxsort] < FLAGS.min_cosine_distance)]
-            
-            
-            for idx in idx_threshold:
+            cosine_distance = nn_matching._cosine_distance(query_feat, gallery_feat)
+            argmin = np.argmin(cosine_distance)
+            gallery_idx = gallery_idxs[argmin]
+            if cosine_distance[:, argmin] < FLAGS.min_cosine_distance: #TODO : 두 번째 re-id 부터는 distance 허들을 더 높이자
                 
-                gallery_idx = gallery_idxs[idx]
-                
-                dist = cosine_distance[idx]
-                
-                query_id = tracker[1].tracks[query_idx].match_id
-                
-                if tracker[1].tracks[query_idx].match_distance > dist and tracker[0].tracks[gallery_idx].match_distance > dist:
+                if tracker[1].tracks[query_idx].matched:
                     
-                    if tracker[1].tracks[query_idx].matched:
-                        
-                        for i, _match_id in enumerate(gallery_match_ids):
-                            if _match_id == query_id:
-                                tracker[0].tracks[gallery_idxs[i]].matched = False
-                                tracker[0].tracks[gallery_idxs[i]].match_id = -1
-                                tracker[0].tracks[gallery_idxs[i]].match_distance = 1.0
-                        tracker[0].tracks[gallery_idx].matched = True
-                        tracker[0].tracks[gallery_idx].match_id = query_id
-                        tracker[0].tracks[gallery_idx].match_distance = dist
-                        tracker[1].tracks[query_idx].match_distance = dist
-                        
-                    else:
-                        
-                        match_id += 1
-                        tracker[1].tracks[query_idx].matched = True
-                        tracker[1].tracks[query_idx].match_id = match_id
-                        tracker[1].tracks[query_idx].match_distance = dist
-                        tracker[0].tracks[gallery_idx].matched = True
-                        tracker[0].tracks[gallery_idx].match_id = match_id
-                        tracker[0].tracks[gallery_idx].match_distance = dist
+                    query_id = tracker[1].tracks[query_idx].match_id
                     
-                    break
-                
+                    for i, _match_id in enumerate(gallery_match_ids):
+                        if _match_id == query_id:
+                            tracker[0].tracks[gallery_idxs[i]].matched= False
+                            tracker[0].tracks[gallery_idxs[i]].match_id= -1                           
+                            
+                    tracker[0].tracks[gallery_idx].matched = True
+                    tracker[0].tracks[gallery_idx].match_id = query_id
+                else:
+                    match_id += 1
+                    # if tracker[0].tracks[gallery_idx].matched:                        
+                    #     tracker[1].tracks[query_idx].match_id = tracker[0].tracks[gallery_idx].match_id
+                    #     tracker[1].tracks[query_idx].matched = True
+                    # else:
+                    tracker[1].tracks[query_idx].matched = True
+                    tracker[1].tracks[query_idx].match_id = match_id
+                    tracker[0].tracks[gallery_idx].matched = True
+                    tracker[0].tracks[gallery_idx].match_id = match_id
                 
         # update tracks
         for track in tracker1.tracks:

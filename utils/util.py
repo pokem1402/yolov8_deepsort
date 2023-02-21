@@ -36,3 +36,22 @@ def region_filtering_by_relative_position(bbox_xywh, original_h, upper_limit = 0
     rejected = np.where(np.logical_not(mask))
     
     return accepted, rejected
+
+def frame2time(frame, fps):
+    
+    second = float(frame) / float(fps)
+    
+    remainder = second - float(int(second))
+    
+    second = int(second)
+    
+    hour = second // 3600
+    
+    second %= 3600
+    
+    minute = second // 60
+    
+    second %= 60
+    
+    return f"{hour}h{minute}m{second}.{str(remainder)[2:3]}s"
+    

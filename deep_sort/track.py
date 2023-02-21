@@ -73,8 +73,9 @@ class Track:
         self.time_since_update = 0
         
         # for reid
-        self.matched = False
-        self.match_id = -1
+        self.matched = False            # matched?
+        self.match_id = -1              # match id
+        self.match_distance = 1.0       # shortest distance
 
         self.state = TrackState.Tentative
         self.features = []
